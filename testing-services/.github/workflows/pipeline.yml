@@ -2,6 +2,9 @@ name: CI for Angular
 on: push
 jobs:
   unit-test:
+    defaults:
+      run:
+        working-directory: testing-services
     runs-on: ubuntu-latest
     steps:
       - name: Clone
