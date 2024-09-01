@@ -58,5 +58,20 @@ describe('Tests for Person', () => {
 
       expect(response).toEqual('overweight lv 3');
     });
+
+    it('should return a string: height must be greater or equal than zero', () => {
+      person.weight = 140;
+      person.height = 0;
+      const response = person.calcIMC();
+
+      expect(response).toEqual('height must be greater or equal than zero');
+    });
+
+    it('should return a string: error', () => {
+      person.weight = Number('b');
+      const response = person.calcIMC();
+
+      expect(response).toEqual('error');
+    });
   })
 })

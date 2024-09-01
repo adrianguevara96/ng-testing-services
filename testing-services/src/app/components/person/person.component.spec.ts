@@ -7,14 +7,20 @@ import { Person } from 'src/app/models/person.model';
 
 describe('PersonComponent', () => {
   let component: PersonComponent;
+  // instancia de nuestro componente
   let fixture: ComponentFixture<PersonComponent>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [PersonComponent]
     });
+
+    // crear componente
     fixture = TestBed.createComponent(PersonComponent);
     component = fixture.componentInstance;
+    component.person = new Person('Adrian', 'Guevara', 28, 80, 1.76);
+
+    // ciclo de vida de angular
     fixture.detectChanges();
   });
 
@@ -69,5 +75,33 @@ describe('PersonComponent', () => {
     expect(h3Element.textContent).toEqual(`Hola, ${component.person.name}`);
     // to contain
     expect(h3Element.textContent).toContain(`Hola, ${component.person.name}`);
+  });
+
+  // simulating click
+
+  it('should display a text "overweight lv 2" with IMC when get button text', () => {
+    // arrange
+    const expectMsg = 'overweight lv 2'
+    component.person = new Person('Juan', 'Perez', 30, 120, 1.65);
+    const button = fixture.debugElement.query(By.css('button.btn-imc'))
+    .nativeElement;
+    // act
+    component.calcIMC();
+    fixture.detectChanges();
+    // assert
+    expect(button.textContent).toContain(expectMsg);
+  });
+
+  it('should display a text "overweight lv 2" with IMC when do click', () => {
+    // arrange
+    const expectMsg = 'overweight lv 2'
+    component.person = new Person('Juan', 'Perez', 30, 120, 1.65);
+    const buttonDebug: DebugElement = fixture.debugElement.query(By.css('button.btn-imc'))
+    const buttonElement: HTMLElement = buttonDebug.nativeElement;
+    // act
+    buttonDebug.triggerEventHandler('click', null);
+    fixture.detectChanges();
+    // assert
+    expect(buttonElement.textContent).toContain(expectMsg);
   });
 });
