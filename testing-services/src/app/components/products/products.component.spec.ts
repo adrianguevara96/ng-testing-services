@@ -6,6 +6,8 @@ import { ProductComponent } from '../product/product.component';
 import { ProductsService } from 'src/app/services/product.service';
 import { generateManyProducts } from 'src/app/mocks/products.mock';
 import { of } from 'rxjs';
+import { By } from '@angular/platform-browser';
+import { DebugElement } from '@angular/core';
 
 fdescribe('ProductsComponent', () => {
   let component: ProductsComponent;
@@ -39,4 +41,24 @@ fdescribe('ProductsComponent', () => {
     expect(component).toBeTruthy();
     expect(productService.getAll).toHaveBeenCalled();
   });
+
+  describe('tests for getAllProducts', () => {
+    it('should return and render product list', () => {
+      // arrannge
+      const productsMock = generateManyProducts(10);
+      component.products = [];
+      productService.getAll.and.returnValue(of(productsMock));
+      // act
+      component.getAllProducts();
+      fixture.detectChanges();
+
+      const appProductDebugElements: DebugElement[] = fixture.debugElement.queryAll(By.css('app-product'));
+      const appProductElement: HTMLElement = appProductDebugElements[0].nativeElement;
+
+      // assert
+      expect(component.products.length).toEqual(productsMock.length);
+      expect(appProductDebugElements.length).toEqual(10);
+      expect(appProductElement.textContent).toContain(productsMock[0].title);
+    })
+  })
 });
