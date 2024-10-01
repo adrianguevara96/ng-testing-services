@@ -38,8 +38,11 @@ export class ProductsComponent implements OnInit{
         this.offset += this.limit;
       },
       error: (err) => {
-        console.log('err: ', err);
-        this.status = 'error';
+        setTimeout(() => {
+          console.log('err: ', err);
+          this.products = [];
+          this.status = 'error';
+        }, 3000);
       },
       complete: () => {
         this.status = 'success';

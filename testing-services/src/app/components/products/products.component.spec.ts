@@ -1,11 +1,11 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 
 import { ProductsComponent } from './products.component';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ProductComponent } from '../product/product.component';
 import { ProductsService } from 'src/app/services/product.service';
 import { generateManyProducts } from 'src/app/mocks/products.mock';
-import { of } from 'rxjs';
+import { defer, of } from 'rxjs';
 import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 
@@ -59,6 +59,39 @@ fdescribe('ProductsComponent', () => {
       expect(component.products.length).toEqual(productsMock.length);
       expect(appProductDebugElements.length).toEqual(10);
       expect(appProductElement.textContent).toContain(productsMock[0].title);
-    })
+    });
+
+    it('should change the status "loading" to "success"', fakeAsync(() => {
+      // arrange
+      const productsMock = generateManyProducts(10);
+      component.products = [];
+      productService.getAll.and.returnValue(defer(() => Promise.resolve(productsMock)));
+      // act
+      component.getAllProducts();
+      fixture.detectChanges();
+
+      expect(component.status).toEqual('loading');
+      tick(); // exec all task pending [obs, setTimeout, promise]
+      fixture.detectChanges();
+
+      // assert
+      expect(component.status).toEqual('success');
+    }))
+
+    it('should change the status "loading" to "error"', fakeAsync(() => {
+      // arrange
+      component.products = [];
+      productService.getAll.and.returnValue(defer(() => Promise.reject('error')));
+      // act
+      component.getAllProducts();
+      fixture.detectChanges();
+
+      expect(component.status).toEqual('loading');
+      tick(3000); // exec all task pending [obs, setTimeout, promise]
+      fixture.detectChanges();
+
+      // assert
+      expect(component.status).toEqual('error');
+    }))
   })
 });
