@@ -1,7 +1,7 @@
-import { NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -11,6 +11,9 @@ import { TokenInterceptor } from './interceptors/token.interceptor';
 import { PersonComponent } from './components/person/person.component';
 import { PeopleComponent } from './components/people/people.component';
 import { ProductComponent } from './components/product/product.component';
+import { OthersComponent } from './components/others/others.component';
+import { HighligthDirective } from './directives/highligth.directive';
+import { CommonModule } from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -19,16 +22,24 @@ import { ProductComponent } from './components/product/product.component';
     PicoPreviewComponent,
     PersonComponent,
     PeopleComponent,
-    ProductComponent
+    ProductComponent,
+    OthersComponent,
+    HighligthDirective
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
     ReactiveFormsModule,
+    FormsModule,
+    CommonModule
   ],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true }
+  ],
+  schemas: [NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA],
+  exports: [
+    HighligthDirective
   ],
   bootstrap: [AppComponent]
 })
