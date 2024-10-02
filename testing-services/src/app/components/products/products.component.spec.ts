@@ -10,7 +10,7 @@ import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 import { ValueService } from 'src/app/services/value.service';
 
-fdescribe('ProductsComponent', () => {
+describe('ProductsComponent', () => {
   let component: ProductsComponent;
   let fixture: ComponentFixture<ProductsComponent>;
   let productService: jasmine.SpyObj<ProductsService>;
@@ -100,7 +100,7 @@ fdescribe('ProductsComponent', () => {
     }))
   })
 
-  fdescribe('tests for callPromise', () => {
+  describe('tests for callPromise', () => {
     it('should call to promise', async () => {
       // arrange
       const mockMsg = 'my mock string';
