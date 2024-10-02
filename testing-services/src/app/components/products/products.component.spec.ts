@@ -8,14 +8,17 @@ import { generateManyProducts } from 'src/app/mocks/products.mock';
 import { defer, of } from 'rxjs';
 import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
+import { ValueService } from 'src/app/services/value.service';
 
 fdescribe('ProductsComponent', () => {
   let component: ProductsComponent;
   let fixture: ComponentFixture<ProductsComponent>;
   let productService: jasmine.SpyObj<ProductsService>;
+  let valueService: jasmine.SpyObj<ValueService>;
 
   beforeEach(() => {
     const productServiceSpy = jasmine.createSpyObj('ProductsService', ['getAll']);
+    const valueServiceSpy = jasmine.createSpyObj('ValueService', ['getPromiseValue']);
 
     TestBed.configureTestingModule({
       // imports: [ HttpClientTestingModule ],
@@ -24,12 +27,14 @@ fdescribe('ProductsComponent', () => {
         ProductComponent
       ],
       providers: [
-        { provide: ProductsService, useValue: productServiceSpy }
+        { provide: ProductsService, useValue: productServiceSpy },
+        { provide: ValueService, useValue: valueServiceSpy }
       ]
     });
     fixture = TestBed.createComponent(ProductsComponent);
     component = fixture.componentInstance;
     productService = TestBed.inject(ProductsService) as jasmine.SpyObj<ProductsService>;
+    valueService = TestBed.inject(ValueService) as jasmine.SpyObj<ValueService>;
     // mock products
     const productsMock = generateManyProducts(3);
     productService.getAll.and.returnValue(of(productsMock));
@@ -92,6 +97,36 @@ fdescribe('ProductsComponent', () => {
 
       // assert
       expect(component.status).toEqual('error');
+    }))
+  })
+
+  fdescribe('tests for callPromise', () => {
+    it('should call to promise', async () => {
+      // arrange
+      const mockMsg = 'my mock string';
+      valueService.getPromiseValue.and.returnValue(Promise.resolve(mockMsg));
+      // act
+      await component.callPromise();
+      fixture.detectChanges();
+      // assert
+      expect(component.res).toEqual(mockMsg);
+    })
+
+    it('should show "my mock string" in <p> when btn was clicked', fakeAsync(() => {
+      // arrange
+      const mockMsg = 'my mock string';
+      valueService.getPromiseValue.and.returnValue(Promise.resolve(mockMsg));
+      // act
+      const btnDebugElement: DebugElement = fixture.debugElement.query(By.css('.btn-promise'));
+
+      btnDebugElement.triggerEventHandler('click', null);
+      tick();
+      fixture.detectChanges();
+      const pDebugElement: DebugElement = fixture.debugElement.query(By.css('p.res'));
+      const pElement: HTMLElement = pDebugElement.nativeElement;
+      // assert
+      expect(component.res).toEqual(mockMsg);
+      expect(pElement.textContent).toEqual(mockMsg);
     }))
   })
 });
