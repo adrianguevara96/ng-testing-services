@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HighligthDirective } from './highligth.directive';
 import { Component, DebugElement } from '@angular/core';
 import { By } from '@angular/platform-browser';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   template: `
@@ -9,9 +10,12 @@ import { By } from '@angular/platform-browser';
     <h5 highligth="blue">Blue color</h5>
     <p highligth>Default color parrafo</p>
     <p>Otro parrafo</p>
+    <input type="text" [(ngModel)]="color" [highligth]="color">
   `
 })
-class HostComponent {}
+class HostComponent {
+  color = 'orange';
+}
 
 fdescribe('HighligthDirective', () => {
   let component: HostComponent;
@@ -19,7 +23,8 @@ fdescribe('HighligthDirective', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ HostComponent, HighligthDirective ]
+      declarations: [ HostComponent, HighligthDirective ],
+      imports: [FormsModule]
     })
     .compileComponents();
     fixture = TestBed.createComponent(HostComponent);
@@ -40,8 +45,8 @@ fdescribe('HighligthDirective', () => {
     const elements = fixture.debugElement.queryAll(By.directive(HighligthDirective));
     const elementsWithoutD = fixture.debugElement.queryAll(By.css('*:not([highligth])'));
 
-    expect(elements.length).toEqual(3);
-    expect(elementsWithoutD.length).toEqual(1);
+    expect(elements.length).toEqual(4);
+    expect(elementsWithoutD.length).toEqual(2);
   })
 
   it('should the elements be match with bgColor', () => {
@@ -51,7 +56,7 @@ fdescribe('HighligthDirective', () => {
     expect(elements[0].nativeElement.style.backgroundColor).toEqual('gray');
     expect(elements[1].nativeElement.style.backgroundColor).toEqual('blue');
     expect(elements[2].nativeElement.style.backgroundColor).toEqual('gray');
-    expect(elements.length).toEqual(3);
+    expect(elements.length).toEqual(4);
   })
 
   it('should the h5.title be defaultColor', () => {
@@ -61,5 +66,19 @@ fdescribe('HighligthDirective', () => {
     const dir = titleDebugElement.injector.get(HighligthDirective);
 
     expect(titleDebugElement.nativeElement.style.backgroundColor).toEqual(dir.defaultColor);
+  })
+
+  it('should bind <input> and change the bgColor', () => {
+    const inputDebugE: DebugElement = fixture.debugElement.query(By.css('input'));
+    const inputE: HTMLInputElement = inputDebugE.nativeElement;
+
+    expect(inputE.style.backgroundColor).toEqual('orange');
+
+    inputE.value = 'red';
+    inputE.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    expect(inputE.style.backgroundColor).toEqual('red');
+    expect(component.color).toEqual('red');
   })
 });
