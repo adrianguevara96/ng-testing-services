@@ -12,7 +12,20 @@ describe('ProductComponent', () => {
     });
     fixture = TestBed.createComponent(ProductComponent);
     component = fixture.componentInstance;
+
+    component.product = {
+      id: '1',
+      title: 'test',
+      price: 1,
+      images: ['url1', 'url2', 'url3'],
+      description: 'testing desc',
+      category: {
+        id: 0,
+        name: 'X'
+      }
+    };
     fixture.detectChanges();
+
   });
 
   it('should create', () => {

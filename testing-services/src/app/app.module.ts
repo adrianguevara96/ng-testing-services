@@ -41,7 +41,8 @@ import { ReversePipe } from './pipes/reverse.pipe';
   ],
   schemas: [NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA],
   exports: [
-    HighligthDirective
+    HighligthDirective,
+    ReversePipe
   ],
   bootstrap: [AppComponent]
 })
